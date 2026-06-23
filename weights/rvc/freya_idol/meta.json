@@ -1,0 +1,14 @@
+{
+  "voiceId": "freya_idol",
+  "name": "Freya Idol",
+  "source": "https://huggingface.co/firzaelbuho/rvc-voice-models",
+  "originalFiles": {
+    "archive": "idol/freya.zip",
+    "model": "freya dataset_best.pth",
+    "index": "freya dataset.index"
+  },
+  "license": "mit",
+  "sampleRate": 40000,
+  "embedderModel": "contentvec",
+  "notes": "Downloaded from Hugging Face on 2026-06-22. Verify voice rights and production suitability before deployment."
+}

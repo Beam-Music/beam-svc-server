@@ -1,0 +1,44 @@
+{
+  "voices": [
+    {
+      "voiceId": "dionn_v1_singing",
+      "name": "Dionn V1 Singing",
+      "category": "Custom Licensed",
+      "description": "RVC singing model downloaded from Hugging Face; see weights/rvc/dionn_v1_singing/meta.json for source/license.",
+      "preview_url": null,
+      "language": ["en"],
+      "voiceType": "singer",
+      "model": {
+        "engine": "rvc",
+        "sampleRate": 48000,
+        "f0": true,
+        "indexRatio": 0.75,
+        "protect": 0.33,
+        "filterRadius": 3,
+        "mixRate": 0.9,
+        "modelPath": "weights/rvc/dionn_v1_singing/model.pth",
+        "indexPath": "weights/rvc/dionn_v1_singing/added.index"
+      }
+    },
+    {
+      "voiceId": "freya_idol",
+      "name": "Freya Idol",
+      "category": "Open Source",
+      "description": "RVC voice model downloaded from Hugging Face; see weights/rvc/freya_idol/meta.json for source/license.",
+      "preview_url": null,
+      "language": ["id"],
+      "voiceType": "default",
+      "model": {
+        "engine": "rvc",
+        "sampleRate": 40000,
+        "f0": true,
+        "indexRatio": 0.75,
+        "protect": 0.33,
+        "filterRadius": 3,
+        "mixRate": 0.9,
+        "modelPath": "weights/rvc/freya_idol/model.pth",
+        "indexPath": "weights/rvc/freya_idol/added.index"
+      }
+    }
+  ]
+}
