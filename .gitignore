@@ -6,3 +6,4 @@ tmp/*
 weights/*
 !weights/rvc/
 !weights/rvc/.gitkeep
+!weights/.gitkeep
