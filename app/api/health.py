@@ -12,8 +12,20 @@ doctor = RuntimeDoctor()
 def health() -> HealthResponse:
     status = pipeline.health()
     checks = doctor.check()
+    ok = all(
+        [
+            checks["rvc_repo_exists"],
+            checks["infer_cli_exists"],
+            checks["rvc_python_exists"],
+            checks["ffmpeg_exists"],
+            checks["ffprobe_exists"],
+            checks["demucs_exists"],
+            checks["registry_exists"],
+            checks["at_least_one_model_exists"],
+        ]
+    )
     return HealthResponse(
-        ok=checks["rvc_repo_exists"] and checks["infer_cli_exists"] and checks["registry_exists"] and checks["at_least_one_model_exists"],
+        ok=ok,
         service="beam-svc",
         version="0.1.0",
         gpu=status["gpu"],
