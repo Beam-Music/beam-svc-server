@@ -3,7 +3,7 @@ import sys
 import requests
 
 BASE_URL = "http://127.0.0.1:8081"
-VOICE_ID = "taylor_swift_singer"
+VOICE_ID = "dionn_v1_singing"
 
 
 def main() -> None:
