@@ -23,6 +23,7 @@ class ConversionOptions:
     index_ratio: float | None = None
     protect: float | None = None
     filter_radius: int | None = None
+    is_async: bool = False
 
 
 class BeamSVCPipeline:
@@ -58,7 +59,7 @@ class BeamSVCPipeline:
                 duration=options.trim_duration,
             )
         duration = probe_duration_seconds(normalized_wav)
-        if duration > 60:
+        if not options.is_async and duration > 60:
             raise ValueError("Sync conversion currently supports audio up to 60 seconds")
 
         vocals_wav, instrumental_wav = self.demucs.separate(normalized_wav, workdir)

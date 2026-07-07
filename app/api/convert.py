@@ -59,6 +59,7 @@ def run_conversion_job(
                     index_ratio=index_ratio,
                     protect=protect,
                     filter_radius=filter_radius,
+                    is_async=True,
                 ),
             )
         saved_path = cache.save(cache_key, output_format, result)
