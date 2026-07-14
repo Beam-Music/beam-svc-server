@@ -36,11 +36,16 @@ class BeamSVCPipeline:
 
     def health(self) -> dict:
         has_models = any(
-            voice.model is not None and Path(voice.model.modelPath).exists()
+            voice.model is not None and (settings.project_dir / voice.model.modelPath).exists()
             for voice in self.registry.list_voices().voices
         )
+        try:
+            import torch
+            gpu_ok = torch.cuda.is_available()
+        except ImportError:
+            gpu_ok = False
         return {
-            "gpu": False,
+            "gpu": gpu_ok,
             "modelsLoaded": has_models,
         }
 

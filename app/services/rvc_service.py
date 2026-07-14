@@ -53,6 +53,9 @@ class RVCService:
 
         env = os.environ.copy()
         env["weight_root"] = str(resolved_model_path.parent)
+        numba_cache_dir = settings.temp_dir / "numba_cache"
+        numba_cache_dir.mkdir(parents=True, exist_ok=True)
+        env.setdefault("NUMBA_CACHE_DIR", str(numba_cache_dir))
 
         run_command(command, cwd=settings.rvc_repo, env=env)
         return output_path

@@ -81,7 +81,7 @@ async def voice_conversion(
     output_format: str = Form("mp3"),
     trim_start: float | None = Form(None),
     trim_duration: float | None = Form(None),
-    pitch_shift: int = Form(0),
+    pitch_shift: int | None = Form(None),
     index_ratio: float | None = Form(None),
     protect: float | None = Form(None),
     filter_radius: int | None = Form(None),
@@ -100,6 +100,10 @@ async def voice_conversion(
     if len(payload) > MAX_FILE_SIZE:
         raise HTTPException(status_code=413, detail={"error": "file_too_large", "message": "Max 25MB"})
 
+    effective_pitch_shift = pitch_shift
+    if effective_pitch_shift is None:
+        effective_pitch_shift = voice.model.defaultPitchShift if voice.model else 0
+
     cache_key = cache.make_key(
         payload,
         voice_id=voiceId,
@@ -110,7 +114,7 @@ async def voice_conversion(
         output_format=output_format,
         trim_start=trim_start,
         trim_duration=trim_duration,
-        pitch_shift=pitch_shift,
+        pitch_shift=effective_pitch_shift,
         index_ratio=index_ratio,
         protect=protect,
         filter_radius=filter_radius,
@@ -142,7 +146,7 @@ async def voice_conversion(
             output_format,
             trim_start,
             trim_duration,
-            pitch_shift,
+            effective_pitch_shift,
             index_ratio,
             protect,
             filter_radius,
@@ -168,7 +172,7 @@ async def voice_conversion(
                     output_format=output_format,
                     trim_start=trim_start,
                     trim_duration=trim_duration,
-                    pitch_shift=pitch_shift,
+                    pitch_shift=effective_pitch_shift,
                     index_ratio=index_ratio,
                     protect=protect,
                     filter_radius=filter_radius,

@@ -18,6 +18,7 @@ class VoiceModelMeta(BaseModel):
     protect: float
     filterRadius: int
     mixRate: float
+    defaultPitchShift: int = 0
     modelPath: str
     indexPath: Optional[str] = None
 

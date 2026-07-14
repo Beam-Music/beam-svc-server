@@ -3,10 +3,12 @@
     {
       "voiceId": "dionn_v1_singing",
       "name": "Dionn V1 Singing",
-      "category": "Custom Licensed",
-      "description": "RVC singing model downloaded from Hugging Face; see weights/rvc/dionn_v1_singing/meta.json for source/license.",
+      "category": "Default Male",
+      "description": "Male singing voice",
       "preview_url": null,
-      "language": ["en"],
+      "language": [
+        "en"
+      ],
       "voiceType": "singer",
       "model": {
         "engine": "rvc",
@@ -23,10 +25,12 @@
     {
       "voiceId": "freya_idol",
       "name": "Freya Idol",
-      "category": "Open Source",
-      "description": "RVC voice model downloaded from Hugging Face; see weights/rvc/freya_idol/meta.json for source/license.",
+      "category": "Default Female",
+      "description": "Female idol-style vocal voice",
       "preview_url": null,
-      "language": ["id"],
+      "language": [
+        "id"
+      ],
       "voiceType": "default",
       "model": {
         "engine": "rvc",
@@ -38,6 +42,118 @@
         "mixRate": 0.9,
         "modelPath": "weights/rvc/freya_idol/model.pth",
         "indexPath": "weights/rvc/freya_idol/added.index"
+      }
+    },
+    {
+      "voiceId": "taylor_swift_singer",
+      "name": "Taylor Swift",
+      "category": "Celebrity",
+      "description": "Singer-style pop vocal",
+      "preview_url": null,
+      "language": [
+        "en"
+      ],
+      "voiceType": "singer",
+      "model": {
+        "engine": "rvc",
+        "sampleRate": 48000,
+        "f0": true,
+        "indexRatio": 0.75,
+        "protect": 0.33,
+        "filterRadius": 3,
+        "mixRate": 1.35,
+        "defaultPitchShift": 12,
+        "modelPath": "weights/rvc/taylor_swift_singer/model.pth",
+        "indexPath": null
+      }
+    },
+    {
+      "voiceId": "the_weeknd",
+      "name": "The Weeknd",
+      "category": "Celebrity",
+      "description": "The Weeknd-style male pop vocal (Moneerrashed RVC)",
+      "preview_url": null,
+      "language": [
+        "en"
+      ],
+      "voiceType": "singer",
+      "model": {
+        "engine": "rvc",
+        "sampleRate": 48000,
+        "f0": true,
+        "indexRatio": 0.75,
+        "protect": 0.33,
+        "filterRadius": 3,
+        "mixRate": 0.9,
+        "modelPath": "weights/rvc/the_weeknd/model.pth",
+        "indexPath": "weights/rvc/the_weeknd/added.index"
+      }
+    },
+    {
+      "voiceId": "ariana_grande",
+      "name": "Ariana Grande",
+      "category": "Celebrity",
+      "description": "Ariana Grande-style female pop vocal",
+      "preview_url": null,
+      "language": [
+        "en"
+      ],
+      "voiceType": "singer",
+      "model": {
+        "engine": "rvc",
+        "sampleRate": 40000,
+        "f0": true,
+        "indexRatio": 0.75,
+        "protect": 0.33,
+        "filterRadius": 3,
+        "mixRate": 0.9,
+        "defaultPitchShift": 12,
+        "modelPath": "weights/rvc/ariana_grande/model.pth",
+        "indexPath": null
+      }
+    },
+    {
+      "voiceId": "lil_wayne",
+      "name": "Lil Wayne",
+      "category": "Celebrity",
+      "description": "Lil Wayne-style male rap vocal (index disabled for stability)",
+      "preview_url": null,
+      "language": [
+        "en"
+      ],
+      "voiceType": "singer",
+      "model": {
+        "engine": "rvc",
+        "sampleRate": 40000,
+        "f0": true,
+        "indexRatio": 0.0,
+        "protect": 0.33,
+        "filterRadius": 3,
+        "mixRate": 0.9,
+        "modelPath": "weights/rvc/lil_wayne/model.pth",
+        "indexPath": null
+      }
+    },
+    {
+      "voiceId": "drake",
+      "name": "Drake",
+      "category": "Celebrity",
+      "description": "Drake-style male rap vocal",
+      "preview_url": null,
+      "language": [
+        "en"
+      ],
+      "voiceType": "singer",
+      "model": {
+        "engine": "rvc",
+        "sampleRate": 40000,
+        "f0": true,
+        "indexRatio": 0.75,
+        "protect": 0.33,
+        "filterRadius": 3,
+        "mixRate": 0.9,
+        "modelPath": "weights/rvc/drake/model.pth",
+        "indexPath": null
       }
     }
   ]
