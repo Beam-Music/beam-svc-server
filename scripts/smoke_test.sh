@@ -99,6 +99,10 @@ if [[ "$RETURN_JOB" == "true" ]]; then
     status="$(python3 -c 'import json,sys; print(json.loads(sys.argv[1]).get("status",""))' "$status_json")"
     case "$status" in
       completed)
+        timings="$(python3 -c 'import json,sys; print(json.dumps(json.loads(sys.argv[1]).get("timings", {}), sort_keys=True))' "$status_json")"
+        if [[ "$timings" != "{}" ]]; then
+          echo "timings: $timings"
+        fi
         echo "== download result =="
         curl -fsS "$BASE_URL/ai-convert/results/$job_id" --output "$OUT_FILE"
         ls -lh "$OUT_FILE"
@@ -128,6 +132,10 @@ else
   cache_header="$(grep -i '^X-Beam-Cache:' "$convert_headers" | tail -1 | cut -d' ' -f2- | tr -d '\r')"
   if [[ -n "$cache_header" ]]; then
     echo "X-Beam-Cache: $cache_header"
+  fi
+  timings_header="$(grep -i '^X-Beam-Timings:' "$convert_headers" | tail -1 | cut -d' ' -f2- | tr -d '\r')"
+  if [[ -n "$timings_header" ]]; then
+    echo "X-Beam-Timings: $timings_header"
   fi
   ls -lh "$OUT_FILE"
   if [[ ! -s "$OUT_FILE" ]]; then

@@ -11,7 +11,7 @@ class RemixService:
             "-y",
             "-i", str(converted_vocals),
             "-i", str(instrumental),
-            "-filter_complex", f"[0:a]volume={vocal_gain}[v];[1:a][v]amix=inputs=2:duration=longest",
+            "-filter_complex", f"[0:a]volume={vocal_gain}[v];[1:a][v]amix=inputs=2:duration=longest:normalize=0",
             str(output_wav),
         ])
         return output_wav

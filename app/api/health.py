@@ -29,5 +29,7 @@ def health() -> HealthResponse:
         service="beam-svc",
         version="0.1.0",
         gpu=status["gpu"],
+        device=status["device"],
+        requireGpu=status["requireGpu"],
         modelsLoaded=status["modelsLoaded"],
     )

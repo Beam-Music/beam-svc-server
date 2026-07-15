@@ -7,6 +7,8 @@ class HealthResponse(BaseModel):
     service: str
     version: str
     gpu: bool
+    device: str
+    requireGpu: bool
     modelsLoaded: bool
 
 
@@ -31,6 +33,9 @@ class VoiceInfo(BaseModel):
     preview_url: Optional[str] = None
     language: list[str] = Field(default_factory=list)
     voiceType: Optional[str] = None
+    hasIndex: bool = False
+    recommendedUse: Optional[str] = None
+    qualityWarning: Optional[str] = None
     model: Optional[VoiceModelMeta] = None
 
 
@@ -44,6 +49,7 @@ class JobStatusResponse(BaseModel):
     status: Literal["queued", "processing", "completed", "failed"]
     progress: int = 0
     stage: Optional[str] = None
+    timings: Optional[dict[str, float]] = None
     resultUrl: Optional[str] = None
     resultPath: Optional[str] = None
     error: Optional[str] = None

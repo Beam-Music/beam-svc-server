@@ -14,7 +14,6 @@ app.include_router(convert_router, prefix="/ai-convert", tags=["convert"])
 app.include_router(jobs_router, prefix="/ai-convert", tags=["jobs"])
 app.include_router(results_router, prefix="/ai-convert", tags=["results"])
 
-
 @app.exception_handler(HTTPException)
 async def http_exception_handler(_, exc: HTTPException):
     if isinstance(exc.detail, dict):

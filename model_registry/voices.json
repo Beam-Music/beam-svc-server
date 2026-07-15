@@ -10,6 +10,8 @@
         "en"
       ],
       "voiceType": "singer",
+      "hasIndex": true,
+      "recommendedUse": "male_singing",
       "model": {
         "engine": "rvc",
         "sampleRate": 48000,
@@ -32,6 +34,8 @@
         "id"
       ],
       "voiceType": "default",
+      "hasIndex": true,
+      "recommendedUse": "female_singing",
       "model": {
         "engine": "rvc",
         "sampleRate": 40000,
@@ -54,15 +58,18 @@
         "en"
       ],
       "voiceType": "singer",
+      "hasIndex": false,
+      "recommendedUse": "female_singing",
+      "qualityWarning": "No index file; target timbre may be weaker than indexed voices.",
       "model": {
         "engine": "rvc",
         "sampleRate": 48000,
         "f0": true,
-        "indexRatio": 0.75,
-        "protect": 0.33,
+        "indexRatio": 0.0,
+        "protect": 0.22,
         "filterRadius": 3,
-        "mixRate": 1.35,
-        "defaultPitchShift": 12,
+        "mixRate": 1.45,
+        "defaultPitchShift": 3,
         "modelPath": "weights/rvc/taylor_swift_singer/model.pth",
         "indexPath": null
       }
@@ -77,6 +84,8 @@
         "en"
       ],
       "voiceType": "singer",
+      "hasIndex": true,
+      "recommendedUse": "male_singing",
       "model": {
         "engine": "rvc",
         "sampleRate": 48000,
@@ -99,6 +108,34 @@
         "en"
       ],
       "voiceType": "singer",
+      "hasIndex": true,
+      "recommendedUse": "female_singing",
+      "model": {
+        "engine": "rvc",
+        "sampleRate": 40000,
+        "f0": true,
+        "indexRatio": 0.75,
+        "protect": 0.2,
+        "filterRadius": 3,
+        "mixRate": 1.45,
+        "defaultPitchShift": 3,
+        "modelPath": "weights/rvc/ariana_grande/model.pth",
+        "indexPath": "weights/rvc/ariana_grande/added.index"
+      }
+    },
+    {
+      "voiceId": "dua_lipa",
+      "name": "Dua Lipa",
+      "category": "Celebrity",
+      "description": "Dua Lipa-style female pop vocal",
+      "preview_url": null,
+      "language": [
+        "en"
+      ],
+      "voiceType": "singer",
+      "hasIndex": false,
+      "recommendedUse": "female_singing",
+      "qualityWarning": "No index file; target timbre may be weaker than indexed voices.",
       "model": {
         "engine": "rvc",
         "sampleRate": 40000,
@@ -107,8 +144,8 @@
         "protect": 0.33,
         "filterRadius": 3,
         "mixRate": 0.9,
-        "defaultPitchShift": 12,
-        "modelPath": "weights/rvc/ariana_grande/model.pth",
+        "defaultPitchShift": 0,
+        "modelPath": "weights/rvc/dua_lipa/model.pth",
         "indexPath": null
       }
     },
@@ -122,6 +159,9 @@
         "en"
       ],
       "voiceType": "singer",
+      "hasIndex": false,
+      "recommendedUse": "male_rap",
+      "qualityWarning": "No index file and rap-oriented model; singing sources may sound less target-like.",
       "model": {
         "engine": "rvc",
         "sampleRate": 40000,
@@ -144,6 +184,34 @@
         "en"
       ],
       "voiceType": "singer",
+      "hasIndex": true,
+      "recommendedUse": "male_rap",
+      "qualityWarning": "Rap-oriented model; singing sources may sound less target-like.",
+      "model": {
+        "engine": "rvc",
+        "sampleRate": 40000,
+        "f0": true,
+        "indexRatio": 0.75,
+        "protect": 0.25,
+        "filterRadius": 3,
+        "mixRate": 1.2,
+        "defaultPitchShift": -5,
+        "modelPath": "weights/rvc/drake/model.pth",
+        "indexPath": "weights/rvc/drake/added.index"
+      }
+    },
+    {
+      "voiceId": "chris_martin",
+      "name": "Chris Martin",
+      "category": "Celebrity",
+      "description": "Chris Martin / Coldplay-style male rock-pop vocal",
+      "preview_url": null,
+      "language": [
+        "en"
+      ],
+      "voiceType": "singer",
+      "hasIndex": true,
+      "recommendedUse": "male_singing",
       "model": {
         "engine": "rvc",
         "sampleRate": 40000,
@@ -152,8 +220,9 @@
         "protect": 0.33,
         "filterRadius": 3,
         "mixRate": 0.9,
-        "modelPath": "weights/rvc/drake/model.pth",
-        "indexPath": null
+        "defaultPitchShift": 0,
+        "modelPath": "weights/rvc/chris_martin/model.pth",
+        "indexPath": "weights/rvc/chris_martin/added.index"
       }
     }
   ]

@@ -38,6 +38,8 @@ class Settings:
     rvc_device = os.getenv("BEAM_RVC_DEVICE", "cpu")
     rvc_is_half = os.getenv("BEAM_RVC_IS_HALF", "false").lower() == "true"
     default_f0_method = os.getenv("BEAM_RVC_F0_METHOD", "rmvpe")
+    require_gpu = os.getenv("BEAM_REQUIRE_GPU", "false").lower() == "true"
+    rvc_worker_enabled = os.getenv("BEAM_RVC_WORKER_ENABLED", "false").lower() == "true"
 
 
 settings = Settings()
