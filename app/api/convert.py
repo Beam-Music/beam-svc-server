@@ -18,10 +18,34 @@ cache = ConversionCache()
 
 ALLOWED_TYPES = {"audio/mpeg", "audio/wav", "audio/x-wav", "audio/mp4", "audio/m4a", "application/octet-stream"}
 MAX_FILE_SIZE = 25 * 1024 * 1024
+MEDIA_TYPES = {
+    "mp3": "audio/mpeg",
+    "wav": "audio/wav",
+    "m4a": "audio/mp4",
+}
 
 
-def effective_pitch_shift_for_request(voice, requested_pitch_shift: int | None) -> int:
+def normalized_source_gender(source_gender: str | None) -> str:
+    value = (source_gender or "").strip().lower()
+    if value in {"female", "woman", "f"}:
+        return "female"
+    if value in {"male", "man", "m"}:
+        return "male"
+    return "unknown"
+
+
+def effective_pitch_shift_for_request(voice, requested_pitch_shift: int | None, source_gender: str | None = None) -> int:
     default_pitch_shift = voice.model.defaultPitchShift if voice.model else 0
+    if requested_pitch_shift is not None and requested_pitch_shift != 0:
+        return requested_pitch_shift
+
+    gender = normalized_source_gender(source_gender)
+    pitch_policy = voice.pitchPolicy or {}
+    if gender in pitch_policy:
+        return pitch_policy[gender]
+    if "unknown" in pitch_policy:
+        return pitch_policy["unknown"]
+
     if requested_pitch_shift is None:
         return default_pitch_shift
     if requested_pitch_shift == 0 and default_pitch_shift != 0:
@@ -35,6 +59,7 @@ def run_conversion_job(
     filename: str,
     voice_id: str,
     voice_type: str | None,
+    source_gender: str | None,
     language: str,
     preserve_melody: str,
     mix_with_instrumental: str,
@@ -45,6 +70,7 @@ def run_conversion_job(
     index_ratio: float | None,
     protect: float | None,
     filter_radius: int | None,
+    mix_rate: float | None,
     cache_key: str,
     result_url: str,
     initial_timings: dict[str, float] | None = None,
@@ -102,6 +128,7 @@ def run_conversion_job(
                     index_ratio=index_ratio,
                     protect=protect,
                     filter_radius=filter_radius,
+                    mix_rate=mix_rate,
                     is_async=True,
                     stage_callback=record_pipeline_stage,
                 ),
@@ -123,6 +150,7 @@ async def voice_conversion(
     source_audio: UploadFile = File(...),
     voiceId: str = Form(...),
     voiceType: str | None = Form(None),
+    source_gender: str | None = Form(None),
     language: str = Form("en"),
     preserve_melody: str = Form("true"),
     mix_with_instrumental: str = Form("true"),
@@ -133,6 +161,7 @@ async def voice_conversion(
     index_ratio: float | None = Form(None),
     protect: float | None = Form(None),
     filter_radius: int | None = Form(None),
+    mix_rate: float | None = Form(None),
     return_job: bool = Form(False),
 ):
     voice = registry.get_voice(voiceId)
@@ -141,23 +170,31 @@ async def voice_conversion(
 
     if source_audio.content_type and source_audio.content_type not in ALLOWED_TYPES:
         raise HTTPException(status_code=400, detail={"error": "unsupported_media_type", "message": f"Unsupported content type: {source_audio.content_type}"})
+    if output_format not in MEDIA_TYPES:
+        raise HTTPException(status_code=400, detail={"error": "unsupported_output_format", "message": output_format})
+    if trim_start is not None and trim_start < 0:
+        raise HTTPException(status_code=400, detail={"error": "invalid_trim_start", "message": "trim_start must be non-negative"})
+    if trim_duration is not None and trim_duration <= 0:
+        raise HTTPException(status_code=400, detail={"error": "invalid_trim_duration", "message": "trim_duration must be positive"})
 
     request_timings: dict[str, float] = {}
     request_start = perf_counter()
     upload_read_start = perf_counter()
-    payload = await source_audio.read()
+    payload = await source_audio.read(MAX_FILE_SIZE + 1)
     request_timings["upload_read"] = round(perf_counter() - upload_read_start, 3)
     if not payload:
         raise HTTPException(status_code=400, detail={"error": "empty_audio", "message": "source_audio is empty"})
     if len(payload) > MAX_FILE_SIZE:
         raise HTTPException(status_code=413, detail={"error": "file_too_large", "message": "Max 25MB"})
 
-    effective_pitch_shift = effective_pitch_shift_for_request(voice, pitch_shift)
+    effective_pitch_shift = effective_pitch_shift_for_request(voice, pitch_shift, source_gender)
+    effective_pitch_policy = f"source_gender:{normalized_source_gender(source_gender)}"
 
     cache_key = cache.make_key(
         payload,
         voice_id=voiceId,
         voice_type=voiceType,
+        source_gender=normalized_source_gender(source_gender),
         language=language,
         preserve_melody=preserve_melody.lower() == "true",
         mix_with_instrumental=mix_with_instrumental.lower() == "true",
@@ -168,6 +205,8 @@ async def voice_conversion(
         index_ratio=index_ratio,
         protect=protect,
         filter_radius=filter_radius,
+        mix_rate=mix_rate,
+        pitch_policy=effective_pitch_policy,
     )
 
     cache_lookup_start = perf_counter()
@@ -175,11 +214,7 @@ async def voice_conversion(
     request_timings["cache_lookup"] = round(perf_counter() - cache_lookup_start, 3)
     if cached is not None and not return_job:
         request_timings["request_total"] = round(perf_counter() - request_start, 3)
-        media_type = {
-            "mp3": "audio/mpeg",
-            "wav": "audio/wav",
-            "m4a": "audio/mp4",
-        }.get(output_format, "audio/mpeg")
+        media_type = MEDIA_TYPES[output_format]
         return Response(content=cached, media_type=media_type, headers={"X-Beam-Cache": "HIT", "X-Beam-Timings": json.dumps(request_timings, separators=(",", ":"))})
 
     if return_job:
@@ -193,6 +228,7 @@ async def voice_conversion(
             source_audio.filename or "input.mp3",
             voiceId,
             voiceType,
+            source_gender,
             language,
             preserve_melody,
             mix_with_instrumental,
@@ -203,6 +239,7 @@ async def voice_conversion(
             index_ratio,
             protect,
             filter_radius,
+            mix_rate,
             cache_key,
             result_url,
             dict(request_timings),
@@ -230,6 +267,7 @@ async def voice_conversion(
                 index_ratio=index_ratio,
                 protect=protect,
                 filter_radius=filter_radius,
+                mix_rate=mix_rate,
             )
             result = pipeline.convert(
                 input_path,
@@ -246,9 +284,5 @@ async def voice_conversion(
     request_timings["cache_save"] = round(perf_counter() - cache_save_start, 3)
     request_timings["request_total"] = round(perf_counter() - request_start, 3)
 
-    media_type = {
-        "mp3": "audio/mpeg",
-        "wav": "audio/wav",
-        "m4a": "audio/mp4",
-    }.get(output_format, "audio/mpeg")
+    media_type = MEDIA_TYPES[output_format]
     return Response(content=result, media_type=media_type, headers={"X-Beam-Cache": "MISS", "X-Beam-Timings": json.dumps(request_timings, separators=(",", ":"))})

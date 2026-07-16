@@ -14,6 +14,7 @@ class ConversionCache:
         *,
         voice_id: str,
         voice_type: str | None,
+        source_gender: str | None,
         language: str,
         preserve_melody: bool,
         mix_with_instrumental: bool,
@@ -24,12 +25,15 @@ class ConversionCache:
         index_ratio: float | None,
         protect: float | None,
         filter_radius: int | None,
+        mix_rate: float | None,
+        pitch_policy: str | None,
     ) -> str:
         digest = hashlib.sha256()
         digest.update(audio_bytes)
         digest.update(str({
             "voice_id": voice_id,
             "voice_type": voice_type,
+            "source_gender": source_gender,
             "language": language,
             "preserve_melody": preserve_melody,
             "mix_with_instrumental": mix_with_instrumental,
@@ -40,6 +44,8 @@ class ConversionCache:
             "index_ratio": index_ratio,
             "protect": protect,
             "filter_radius": filter_radius,
+            "mix_rate": mix_rate,
+            "pitch_policy": pitch_policy,
         }).encode("utf-8"))
         return digest.hexdigest()
 

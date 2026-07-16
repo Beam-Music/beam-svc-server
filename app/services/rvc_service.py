@@ -28,6 +28,7 @@ class RVCService:
         index_ratio: float | None = None,
         protect: float | None = None,
         filter_radius: int | None = None,
+        mix_rate: float | None = None,
     ) -> Path:
         output_path = workdir / "converted_vocals.wav"
 
@@ -54,6 +55,7 @@ class RVCService:
                 index_ratio=index_ratio,
                 protect=protect,
                 filter_radius=filter_radius,
+                mix_rate=mix_rate,
             )
 
         command = [
@@ -70,7 +72,7 @@ class RVCService:
             "--protect", str(protect if protect is not None else voice.model.protect),
             "--filter_radius", str(filter_radius if filter_radius is not None else voice.model.filterRadius),
             "--resample_sr", str(voice.model.sampleRate),
-            "--rms_mix_rate", str(voice.model.mixRate),
+            "--rms_mix_rate", str(mix_rate if mix_rate is not None else voice.model.mixRate),
         ]
 
         if resolved_index_path and resolved_index_path.exists():
@@ -129,6 +131,7 @@ class RVCService:
         index_ratio: float | None,
         protect: float | None,
         filter_radius: int | None,
+        mix_rate: float | None,
     ) -> Path:
         worker = self._ensure_worker()
         if worker.stdin is None or worker.stdout is None:
@@ -146,7 +149,7 @@ class RVCService:
             "protect": protect if protect is not None else voice.model.protect,
             "filterRadius": filter_radius if filter_radius is not None else voice.model.filterRadius,
             "resampleSr": voice.model.sampleRate,
-            "rmsMixRate": voice.model.mixRate,
+            "rmsMixRate": mix_rate if mix_rate is not None else voice.model.mixRate,
         }
 
         with self._worker_lock:

@@ -12,6 +12,11 @@
       "voiceType": "singer",
       "hasIndex": true,
       "recommendedUse": "male_singing",
+      "pitchPolicy": {
+        "female": -5,
+        "male": 0,
+        "unknown": 0
+      },
       "model": {
         "engine": "rvc",
         "sampleRate": 48000,
@@ -36,14 +41,20 @@
       "voiceType": "default",
       "hasIndex": true,
       "recommendedUse": "female_singing",
+      "pitchPolicy": {
+        "female": 2,
+        "male": 8,
+        "unknown": 2
+      },
       "model": {
         "engine": "rvc",
         "sampleRate": 40000,
         "f0": true,
         "indexRatio": 0.75,
-        "protect": 0.33,
+        "protect": 0.22,
         "filterRadius": 3,
-        "mixRate": 0.9,
+        "mixRate": 1.3,
+        "defaultPitchShift": 2,
         "modelPath": "weights/rvc/freya_idol/model.pth",
         "indexPath": "weights/rvc/freya_idol/added.index"
       }
@@ -58,20 +69,24 @@
         "en"
       ],
       "voiceType": "singer",
-      "hasIndex": false,
+      "hasIndex": true,
       "recommendedUse": "female_singing",
-      "qualityWarning": "No index file; target timbre may be weaker than indexed voices.",
+      "pitchPolicy": {
+        "female": 3,
+        "male": 10,
+        "unknown": 3
+      },
       "model": {
         "engine": "rvc",
         "sampleRate": 48000,
         "f0": true,
-        "indexRatio": 0.0,
+        "indexRatio": 0.75,
         "protect": 0.22,
         "filterRadius": 3,
         "mixRate": 1.45,
         "defaultPitchShift": 3,
         "modelPath": "weights/rvc/taylor_swift_singer/model.pth",
-        "indexPath": null
+        "indexPath": "weights/rvc/taylor_swift_singer/added.index"
       }
     },
     {
@@ -86,14 +101,20 @@
       "voiceType": "singer",
       "hasIndex": true,
       "recommendedUse": "male_singing",
+      "pitchPolicy": {
+        "female": -7,
+        "male": 0,
+        "unknown": -7
+      },
       "model": {
         "engine": "rvc",
         "sampleRate": 48000,
         "f0": true,
         "indexRatio": 0.75,
-        "protect": 0.33,
+        "protect": 0.25,
         "filterRadius": 3,
-        "mixRate": 0.9,
+        "mixRate": 1.25,
+        "defaultPitchShift": -7,
         "modelPath": "weights/rvc/the_weeknd/model.pth",
         "indexPath": "weights/rvc/the_weeknd/added.index"
       }
@@ -110,6 +131,11 @@
       "voiceType": "singer",
       "hasIndex": true,
       "recommendedUse": "female_singing",
+      "pitchPolicy": {
+        "female": 3,
+        "male": 10,
+        "unknown": 3
+      },
       "model": {
         "engine": "rvc",
         "sampleRate": 40000,
@@ -133,9 +159,13 @@
         "en"
       ],
       "voiceType": "singer",
-      "hasIndex": false,
+      "hasIndex": true,
       "recommendedUse": "female_singing",
-      "qualityWarning": "No index file; target timbre may be weaker than indexed voices.",
+      "pitchPolicy": {
+        "female": 0,
+        "male": 8,
+        "unknown": 0
+      },
       "model": {
         "engine": "rvc",
         "sampleRate": 40000,
@@ -146,32 +176,37 @@
         "mixRate": 0.9,
         "defaultPitchShift": 0,
         "modelPath": "weights/rvc/dua_lipa/model.pth",
-        "indexPath": null
+        "indexPath": "weights/rvc/dua_lipa/added.index"
       }
     },
     {
       "voiceId": "lil_wayne",
       "name": "Lil Wayne",
       "category": "Celebrity",
-      "description": "Lil Wayne-style male rap vocal (index disabled for stability)",
+      "description": "Lil Wayne-style male rap vocal",
       "preview_url": null,
       "language": [
         "en"
       ],
       "voiceType": "singer",
-      "hasIndex": false,
+      "hasIndex": true,
       "recommendedUse": "male_rap",
-      "qualityWarning": "No index file and rap-oriented model; singing sources may sound less target-like.",
+      "qualityWarning": "Rap-oriented model; singing sources may sound less target-like.",
+      "pitchPolicy": {
+        "female": -5,
+        "male": 0,
+        "unknown": 0
+      },
       "model": {
         "engine": "rvc",
         "sampleRate": 40000,
         "f0": true,
-        "indexRatio": 0.0,
+        "indexRatio": 0.75,
         "protect": 0.33,
         "filterRadius": 3,
         "mixRate": 0.9,
         "modelPath": "weights/rvc/lil_wayne/model.pth",
-        "indexPath": null
+        "indexPath": "weights/rvc/lil_wayne/added.index"
       }
     },
     {
@@ -187,6 +222,11 @@
       "hasIndex": true,
       "recommendedUse": "male_rap",
       "qualityWarning": "Rap-oriented model; singing sources may sound less target-like.",
+      "pitchPolicy": {
+        "female": -5,
+        "male": 0,
+        "unknown": -5
+      },
       "model": {
         "engine": "rvc",
         "sampleRate": 40000,
@@ -195,7 +235,7 @@
         "protect": 0.25,
         "filterRadius": 3,
         "mixRate": 1.2,
-        "defaultPitchShift": -5,
+        "defaultPitchShift": 0,
         "modelPath": "weights/rvc/drake/model.pth",
         "indexPath": "weights/rvc/drake/added.index"
       }
@@ -212,6 +252,131 @@
       "voiceType": "singer",
       "hasIndex": true,
       "recommendedUse": "male_singing",
+      "pitchPolicy": {
+        "female": 0,
+        "male": 0,
+        "unknown": 0
+      },
+      "model": {
+        "engine": "rvc",
+        "sampleRate": 40000,
+        "f0": true,
+        "indexRatio": 0.75,
+        "protect": 0.25,
+        "filterRadius": 3,
+        "mixRate": 1.2,
+        "defaultPitchShift": 0,
+        "modelPath": "weights/rvc/chris_martin/model.pth",
+        "indexPath": "weights/rvc/chris_martin/added.index"
+      }
+    },
+    {
+      "voiceId": "bad_bunny",
+      "name": "Bad Bunny",
+      "category": "Celebrity",
+      "description": "Bad Bunny-style Latin rap and reggaeton vocal",
+      "preview_url": null,
+      "language": [
+        "es"
+      ],
+      "voiceType": "singer",
+      "hasIndex": true,
+      "recommendedUse": "male_rap",
+      "qualityWarning": "Rap-oriented model; singing sources may sound less target-like.",
+      "pitchPolicy": {
+        "female": -5,
+        "male": 0,
+        "unknown": -5
+      },
+      "model": {
+        "engine": "rvc",
+        "sampleRate": 40000,
+        "f0": true,
+        "indexRatio": 0.75,
+        "protect": 0.33,
+        "filterRadius": 3,
+        "mixRate": 0.9,
+        "defaultPitchShift": -5,
+        "modelPath": "weights/rvc/bad_bunny/model.pth",
+        "indexPath": "weights/rvc/bad_bunny/added.index"
+      }
+    },
+    {
+      "voiceId": "gari_and_luna_1",
+      "name": "Gari & Luna 1",
+      "category": "Custom",
+      "description": "Gari & Luna singing voice, variant 1",
+      "preview_url": null,
+      "language": [],
+      "voiceType": "singer",
+      "hasIndex": true,
+      "recommendedUse": "general_singing",
+      "qualityWarning": "Gender and language have not been QA-verified; neutral pitch is used.",
+      "pitchPolicy": {
+        "female": 0,
+        "male": 0,
+        "unknown": 0
+      },
+      "model": {
+        "engine": "rvc",
+        "sampleRate": 32000,
+        "f0": true,
+        "indexRatio": 0.75,
+        "protect": 0.33,
+        "filterRadius": 3,
+        "mixRate": 0.9,
+        "defaultPitchShift": 0,
+        "modelPath": "weights/rvc/gari_and_luna_1/model.pth",
+        "indexPath": "weights/rvc/gari_and_luna_1/added.index"
+      }
+    },
+    {
+      "voiceId": "gari_and_luna_2",
+      "name": "Gari & Luna 2",
+      "category": "Custom",
+      "description": "Gari & Luna singing voice, variant 2",
+      "preview_url": null,
+      "language": [],
+      "voiceType": "singer",
+      "hasIndex": true,
+      "recommendedUse": "general_singing",
+      "qualityWarning": "Gender and language have not been QA-verified; neutral pitch is used.",
+      "pitchPolicy": {
+        "female": 0,
+        "male": 0,
+        "unknown": 0
+      },
+      "model": {
+        "engine": "rvc",
+        "sampleRate": 32000,
+        "f0": true,
+        "indexRatio": 0.75,
+        "protect": 0.33,
+        "filterRadius": 3,
+        "mixRate": 0.9,
+        "defaultPitchShift": 0,
+        "modelPath": "weights/rvc/gari_and_luna_2/model.pth",
+        "indexPath": "weights/rvc/gari_and_luna_2/added.index"
+      }
+    },
+    {
+      "voiceId": "kehlani",
+      "name": "Kehlani",
+      "category": "Celebrity",
+      "description": "Kehlani-style female R&B vocal",
+      "preview_url": null,
+      "language": [
+        "en"
+      ],
+      "voiceType": "singer",
+      "hasIndex": true,
+      "recommendedUse": "female_singing",
+      "qualityWarning": "Short training run; quality needs listening QA.",
+      "pitchPolicy": {
+        "female": 0,
+        "male": 8,
+        "unknown": 0
+      },
       "model": {
         "engine": "rvc",
         "sampleRate": 40000,
@@ -221,8 +386,39 @@
         "filterRadius": 3,
         "mixRate": 0.9,
         "defaultPitchShift": 0,
-        "modelPath": "weights/rvc/chris_martin/model.pth",
-        "indexPath": "weights/rvc/chris_martin/added.index"
+        "modelPath": "weights/rvc/kehlani/model.pth",
+        "indexPath": "weights/rvc/kehlani/added.index"
+      }
+    },
+    {
+      "voiceId": "macan",
+      "name": "Macan",
+      "category": "Celebrity",
+      "description": "Macan-style male rap vocal",
+      "preview_url": null,
+      "language": [
+        "ru"
+      ],
+      "voiceType": "singer",
+      "hasIndex": true,
+      "recommendedUse": "male_rap",
+      "qualityWarning": "Rap-oriented model; singing sources may sound less target-like.",
+      "pitchPolicy": {
+        "female": -5,
+        "male": 0,
+        "unknown": 0
+      },
+      "model": {
+        "engine": "rvc",
+        "sampleRate": 40000,
+        "f0": true,
+        "indexRatio": 0.75,
+        "protect": 0.33,
+        "filterRadius": 3,
+        "mixRate": 0.9,
+        "defaultPitchShift": 0,
+        "modelPath": "weights/rvc/macan/model.pth",
+        "indexPath": "weights/rvc/macan/added.index"
       }
     }
   ]

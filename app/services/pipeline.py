@@ -34,6 +34,7 @@ class ConversionOptions:
     index_ratio: float | None = None
     protect: float | None = None
     filter_radius: int | None = None
+    mix_rate: float | None = None
     is_async: bool = False
     timings: dict[str, float] = field(default_factory=dict)
     stage_callback: Callable[[str, float, dict[str, float]], None] | None = None
@@ -124,7 +125,7 @@ class BeamSVCPipeline:
                 ),
             )
             if options.mix_with_instrumental:
-                mix_rate = voice.model.mixRate if voice.model else 1.0
+                mix_rate = self._effective_mix_rate(voice, options)
                 final_wav = self._time_stage(
                     options,
                     "remix",
@@ -193,12 +194,13 @@ class BeamSVCPipeline:
                 index_ratio=options.index_ratio,
                 protect=options.protect,
                 filter_radius=options.filter_radius,
+                mix_rate=options.mix_rate,
             )
 
             final_chunk = chunk_workdir / "final_chunk.wav"
             if options.mix_with_instrumental:
                 self._notify_stage(options, f"chunk_{index}_of_{total_chunks}_remix")
-                mix_rate = voice.model.mixRate if voice.model else 1.0
+                mix_rate = self._effective_mix_rate(voice, options)
                 final_chunk = self.remix.remix(
                     converted_vocals,
                     instrumental_wav,
@@ -214,6 +216,9 @@ class BeamSVCPipeline:
     def _notify_stage(self, options: ConversionOptions, stage: str) -> None:
         if options.stage_callback is not None:
             options.stage_callback(stage, 0.0, dict(options.timings))
+
+    def _effective_mix_rate(self, voice, options: ConversionOptions) -> float:
+        return options.mix_rate if options.mix_rate is not None else (voice.model.mixRate if voice.model else 1.0)
 
     def _split_audio(self, input_wav: Path, output_dir: Path, chunk_seconds: float) -> list[Path]:
         output_dir.mkdir(parents=True, exist_ok=True)
@@ -272,6 +277,7 @@ class BeamSVCPipeline:
                 index_ratio=options.index_ratio,
                 protect=options.protect,
                 filter_radius=options.filter_radius,
+                mix_rate=options.mix_rate,
             )
 
         chunk_root = workdir / "rvc_chunks"
@@ -295,6 +301,7 @@ class BeamSVCPipeline:
                 index_ratio=options.index_ratio,
                 protect=options.protect,
                 filter_radius=options.filter_radius,
+                mix_rate=options.mix_rate,
             )
             converted_chunks.append(converted)
 

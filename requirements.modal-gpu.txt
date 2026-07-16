@@ -1,0 +1,19 @@
+fastapi==0.116.1
+uvicorn[standard]==0.35.0
+python-multipart==0.0.20
+pydantic==2.11.7
+demucs==4.0.1
+numpy==1.26.4
+scipy==1.11.4
+librosa==0.10.2.post1
+numba==0.59.1
+llvmlite==0.42.0
+faiss-cpu==1.8.0.post1
+av==12.3.0
+python-dotenv==1.0.1
+soundfile==0.12.1
+joblib==1.4.2
+tqdm==4.66.5
+pybase16384==0.3.7
+Cython==3.0.11
+fairseq @ git+https://github.com/One-sixth/fairseq.git@44800430a728c2216fd1cf1e8daa672f50dfacba

@@ -46,6 +46,11 @@ VOICE_TRAITS = {
     "the_weeknd": {"gender": "male", "genre": "rnb"},
     "drake": {"gender": "male", "genre": "rap"},
     "lil_wayne": {"gender": "male", "genre": "rap"},
+    "bad_bunny": {"gender": "male", "genre": "rap"},
+    "gari_and_luna_1": {"gender": "unknown", "genre": "unknown"},
+    "gari_and_luna_2": {"gender": "unknown", "genre": "unknown"},
+    "kehlani": {"gender": "female", "genre": "rnb"},
+    "macan": {"gender": "male", "genre": "rap"},
 }
 
 
@@ -251,6 +256,7 @@ def convert_case(
     fields = {
         "voiceId": voice_id,
         "voiceType": voice.get("voiceType") or "singer",
+        "source_gender": source.gender,
         "language": "en",
         "preserve_melody": "true",
         "mix_with_instrumental": "true",

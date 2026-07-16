@@ -7,7 +7,6 @@ weights/*
 !weights/rvc/
 !weights/rvc/.gitkeep
 !weights/.gitkeep
-weights/rvc/*/model.pth
-weights/rvc/*/model.previous.pth
-weights/rvc/*/added.index
+weights/rvc/*/*.pth
+weights/rvc/*/*.index
 .DS_Store

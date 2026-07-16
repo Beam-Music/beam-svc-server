@@ -39,7 +39,7 @@ def main() -> int:
     Config.use_insecure_load()
 
     vc = VC(config)
-    current_model = ""
+    current_model_path = ""
     _write({"ready": True, "device": config.device, "isHalf": config.is_half})
 
     for raw_line in sys.stdin:
@@ -53,10 +53,11 @@ def main() -> int:
                 return 0
 
             model_name = request["modelName"]
-            os.environ["weight_root"] = request["weightRoot"]
-            if model_name != current_model:
+            model_path = (Path(request["weightRoot"]) / model_name).resolve()
+            os.environ["weight_root"] = str(model_path.parent)
+            if str(model_path) != current_model_path:
                 vc.get_vc(model_name)
-                current_model = model_name
+                current_model_path = str(model_path)
 
             info, wav_opt = vc.vc_single(
                 0,

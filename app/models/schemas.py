@@ -36,6 +36,7 @@ class VoiceInfo(BaseModel):
     hasIndex: bool = False
     recommendedUse: Optional[str] = None
     qualityWarning: Optional[str] = None
+    pitchPolicy: Optional[dict[str, int]] = None
     model: Optional[VoiceModelMeta] = None
 
 
