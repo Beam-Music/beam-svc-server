@@ -65,7 +65,13 @@ class DemucsService:
         wav = wav - ref.mean()
         wav = wav / ref.std()
         duration = probe_duration_seconds(input_wav)
-        split = duration > 30
+        # `htdemucs` is trained on short segments (about 7.8 seconds).  Passing
+        # a longer waveform to apply_model with split=False raises a ValueError,
+        # which was happening for 30-second multi-vocal renders.  Use the model
+        # segment when available so this remains correct if the Demucs model is
+        # changed later.
+        segment_seconds = getattr(model, "segment", None) or 7.8
+        split = duration > float(segment_seconds)
         with torch.no_grad():
             sources = apply_model(
                 model,

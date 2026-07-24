@@ -52,6 +52,7 @@ class JobStatusResponse(BaseModel):
     stage: Optional[str] = None
     timings: Optional[dict[str, float]] = None
     resultUrl: Optional[str] = None
+    resultAudioUrl: Optional[str] = None
     resultPath: Optional[str] = None
     error: Optional[str] = None
 
@@ -59,3 +60,33 @@ class JobStatusResponse(BaseModel):
 class ConversionAcceptedResponse(BaseModel):
     jobId: str
     status: Literal["queued"]
+
+
+class VocalSegment(BaseModel):
+    start: float = Field(ge=0)
+    end: float = Field(gt=0)
+
+
+class VocalAssignment(BaseModel):
+    """A user-confirmed, non-overlapping portion of the shared vocal stem."""
+
+    assignmentId: str = Field(min_length=1, max_length=128)
+    sourceTrackId: str = Field(default="vocal_candidate_1", min_length=1)
+    voiceId: str = Field(min_length=1)
+    segments: list[VocalSegment]
+    mixGain: float = Field(default=1.0, ge=0, le=2)
+    pitchShift: Optional[int] = Field(default=None, ge=-24, le=24)
+
+
+class VocalCandidate(BaseModel):
+    trackId: str
+    label: str
+    requiresManualSegmentation: bool
+    supportsOverlaps: bool
+
+
+class VocalAnalysisResponse(BaseModel):
+    analysisVersion: str
+    durationSeconds: float
+    candidates: list[VocalCandidate]
+    limitations: list[str]

@@ -40,6 +40,13 @@ class Settings:
     default_f0_method = os.getenv("BEAM_RVC_F0_METHOD", "rmvpe")
     require_gpu = os.getenv("BEAM_REQUIRE_GPU", "false").lower() == "true"
     rvc_worker_enabled = os.getenv("BEAM_RVC_WORKER_ENABLED", "false").lower() == "true"
+    max_conversion_seconds = float(os.getenv("BEAM_MAX_CONVERSION_SECONDS", "0") or "0")
+    min_conversion_seconds = float(os.getenv("BEAM_MIN_CONVERSION_SECONDS", "0.1") or "0.1")
+    medleyvox_enabled = os.getenv("BEAM_MEDLEYVOX_ENABLED", "false").lower() == "true"
+    medleyvox_repo = Path(os.getenv("BEAM_MEDLEYVOX_REPO", "/opt/medleyvox"))
+    medleyvox_model_dir = Path(os.getenv("BEAM_MEDLEYVOX_MODEL_DIR", "/opt/beam/weights/medleyvox"))
+    medleyvox_experiment = os.getenv("BEAM_MEDLEYVOX_EXPERIMENT", "singing_librispeech_ft_iSRNet")
+    medleyvox_python = os.getenv("BEAM_MEDLEYVOX_PYTHON", "python")
 
 
 settings = Settings()
