@@ -244,7 +244,7 @@
       "voiceId": "chris_martin",
       "name": "Chris Martin",
       "category": "Celebrity",
-      "description": "Chris Martin / Coldplay-style male rock-pop vocal",
+      "description": "Chris Martin / Coldplay-style male rock-pop vocal (RVC v2 RMVPE, 2025 refresh)",
       "preview_url": null,
       "language": [
         "en"
@@ -259,7 +259,7 @@
       },
       "model": {
         "engine": "rvc",
-        "sampleRate": 40000,
+        "sampleRate": 32000,
         "f0": true,
         "indexRatio": 0.75,
         "protect": 0.25,

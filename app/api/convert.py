@@ -1,6 +1,8 @@
 from pathlib import Path
 import json
+import re
 import tempfile
+from threading import Lock
 from time import perf_counter
 import uuid
 from fastapi import APIRouter, BackgroundTasks, File, Form, HTTPException, Request, UploadFile
@@ -10,11 +12,13 @@ from app.services.cache import ConversionCache
 from app.services.jobs import job_store
 from app.services.pipeline import BeamSVCPipeline, ConversionOptions
 from app.services.registry import VoiceRegistry
+from app.settings import settings
 
 router = APIRouter()
 registry = VoiceRegistry()
 pipeline = BeamSVCPipeline()
 cache = ConversionCache()
+conversion_lock = Lock()
 
 ALLOWED_TYPES = {"audio/mpeg", "audio/wav", "audio/x-wav", "audio/mp4", "audio/m4a", "application/octet-stream"}
 MAX_FILE_SIZE = 25 * 1024 * 1024
@@ -53,6 +57,14 @@ def effective_pitch_shift_for_request(voice, requested_pitch_shift: int | None, 
     return requested_pitch_shift
 
 
+def bounded_trim_duration(trim_duration: float | None) -> float | None:
+    if settings.max_conversion_seconds <= 0:
+        return trim_duration
+    if trim_duration is None:
+        return settings.max_conversion_seconds
+    return min(max(trim_duration, settings.min_conversion_seconds), settings.max_conversion_seconds)
+
+
 def run_conversion_job(
     job_id: str,
     payload: bytes,
@@ -83,8 +95,21 @@ def run_conversion_job(
         timings[stage] = round(perf_counter() - started_at, 3)
         job_store.update(job_id, stage=stage, timings=dict(timings))
 
-    def record_pipeline_stage(stage: str, elapsed: float, pipeline_timings: dict[str, float]) -> None:
-        timings.update(pipeline_timings)
+    def progress_for_pipeline_stage(stage: str) -> int:
+        chunk_match = re.fullmatch(r"chunk_(\d+)_of_(\d+)_(demucs|rmvpe|rvc|remix)", stage)
+        if chunk_match:
+            index, total, phase = chunk_match.groups()
+            chunk_index = int(index)
+            chunk_total = int(total)
+            phase_offset = {"demucs": 0, "rmvpe": 0.38, "rvc": 0.58, "remix": 0.9}[phase]
+            completed_units = (chunk_index - 1) + phase_offset
+            return min(94, max(36, round(36 + (completed_units / chunk_total) * 58)))
+
+        rvc_chunk_match = re.fullmatch(r"rvc_chunk_(\d+)_of_(\d+)", stage)
+        if rvc_chunk_match:
+            index, total = map(int, rvc_chunk_match.groups())
+            return min(88, max(64, round(64 + ((index - 1) / total) * 24)))
+
         progress_by_stage = {
             "normalize": 25,
             "trim": 30,
@@ -98,9 +123,13 @@ def run_conversion_job(
             "output_read": 98,
             "total": 99,
         }
+        return progress_by_stage.get(stage, 20)
+
+    def record_pipeline_stage(stage: str, elapsed: float, pipeline_timings: dict[str, float]) -> None:
+        timings.update(pipeline_timings)
         job_store.update(
             job_id,
-            progress=progress_by_stage.get(stage, 50),
+            progress=progress_for_pipeline_stage(stage),
             stage=stage,
             timings=dict(timings),
         )
@@ -113,31 +142,32 @@ def run_conversion_job(
             input_path.write_bytes(payload)
             record_api_stage("input_write", input_write_start)
             job_store.update(job_id, progress=20, stage="converting", timings=dict(timings))
-            result = pipeline.convert(
-                input_path,
-                ConversionOptions(
-                    voice_id=voice_id,
-                    voice_type=voice_type,
-                    language=language,
-                    preserve_melody=preserve_melody.lower() == "true",
-                    mix_with_instrumental=mix_with_instrumental.lower() == "true",
-                    output_format=output_format,
-                    trim_start=trim_start,
-                    trim_duration=trim_duration,
-                    pitch_shift=pitch_shift,
-                    index_ratio=index_ratio,
-                    protect=protect,
-                    filter_radius=filter_radius,
-                    mix_rate=mix_rate,
-                    is_async=True,
-                    stage_callback=record_pipeline_stage,
-                ),
-            )
+            with conversion_lock:
+                result = pipeline.convert(
+                    input_path,
+                    ConversionOptions(
+                        voice_id=voice_id,
+                        voice_type=voice_type,
+                        language=language,
+                        preserve_melody=preserve_melody.lower() == "true",
+                        mix_with_instrumental=mix_with_instrumental.lower() == "true",
+                        output_format=output_format,
+                        trim_start=trim_start,
+                        trim_duration=trim_duration,
+                        pitch_shift=pitch_shift,
+                        index_ratio=index_ratio,
+                        protect=protect,
+                        filter_radius=filter_radius,
+                        mix_rate=mix_rate,
+                        is_async=True,
+                        stage_callback=record_pipeline_stage,
+                    ),
+                )
         cache_save_start = perf_counter()
         saved_path = cache.save(cache_key, output_format, result)
         record_api_stage("cache_save", cache_save_start)
         timings["job_total"] = round(perf_counter() - job_start, 3)
-        job_store.update(job_id, status="completed", progress=100, stage="completed", timings=dict(timings), resultUrl=result_url, resultPath=str(saved_path), error=None)
+        job_store.update(job_id, status="completed", progress=100, stage="completed", timings=dict(timings), resultUrl=result_url, resultAudioUrl=result_url, resultPath=str(saved_path), error=None)
     except Exception as error:
         timings["job_total"] = round(perf_counter() - job_start, 3)
         job_store.update(job_id, status="failed", progress=100, stage="failed", timings=dict(timings), error=str(error))
@@ -176,6 +206,7 @@ async def voice_conversion(
         raise HTTPException(status_code=400, detail={"error": "invalid_trim_start", "message": "trim_start must be non-negative"})
     if trim_duration is not None and trim_duration <= 0:
         raise HTTPException(status_code=400, detail={"error": "invalid_trim_duration", "message": "trim_duration must be positive"})
+    trim_duration = bounded_trim_duration(trim_duration)
 
     request_timings: dict[str, float] = {}
     request_start = perf_counter()
@@ -220,7 +251,7 @@ async def voice_conversion(
     if return_job:
         job_id = f"svc_{uuid.uuid4().hex}"
         result_url = str(request.url_for("get_result", job_id=job_id))
-        job_store.save(JobStatusResponse(jobId=job_id, status="queued", progress=0, stage="queued", timings=dict(request_timings), resultUrl=result_url, resultPath=None, error=None))
+        job_store.save(JobStatusResponse(jobId=job_id, status="queued", progress=0, stage="queued", timings=dict(request_timings), resultUrl=result_url, resultAudioUrl=result_url, resultPath=None, error=None))
         background_tasks.add_task(
             run_conversion_job,
             job_id,
@@ -269,10 +300,11 @@ async def voice_conversion(
                 filter_radius=filter_radius,
                 mix_rate=mix_rate,
             )
-            result = pipeline.convert(
-                input_path,
-                pipeline_options,
-            )
+            with conversion_lock:
+                result = pipeline.convert(
+                    input_path,
+                    pipeline_options,
+                )
             request_timings.update(pipeline_options.timings)
         except ValueError as error:
             return JSONResponse(status_code=400, content={"error": "conversion_validation_failed", "message": str(error)})
